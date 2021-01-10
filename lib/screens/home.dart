@@ -1,24 +1,48 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:transporter/models/bricole.dart';
+import 'package:transporter/screens/analytics.dart';
+import 'package:transporter/screens/listScreen.dart';
+import 'package:transporter/screens/mapScreen.dart';
+import 'package:transporter/screens/addScreen.dart';
+import 'package:transporter/screens/profile.dart';
 import 'package:transporter/services/auth.dart';
-import 'package:transporter/services/database.dart';
-import 'package:transporter/widgets/bricole_card.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 
 class Home extends StatefulWidget {
   final FirebaseAuth auth;
   final FirebaseFirestore firestore;
-
   const Home({Key key, this.auth, this.firestore}) : super(key: key);
-
   @override
   _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
-  final TextEditingController _bricoleController = TextEditingController();
+  
+  //screens
+  final MapScreen tab0 = MapScreen();
+  final AnalyticsScreen tab3 = AnalyticsScreen();
+  final ProfileScreen tab4 = ProfileScreen();
 
+  //State class
+  int _page = 2;
+  GlobalKey _bottomNavigationKey = GlobalKey();
+
+  Widget pageChooser(int page) {
+    switch (page) {
+      case 0:
+        return tab0;
+      case 1:
+        return ListScreen(auth: widget.auth, firestore: widget.firestore);
+      case 2:
+        return AddScreen(auth: widget.auth, firestore: widget.firestore);
+      case 3:
+        return tab3;
+      case 4:
+        return tab4;
+    }
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,89 +59,25 @@ class _HomeState extends State<Home> {
           )
         ],
       ),
-      body: Column(
-        children: <Widget>[
-          const SizedBox(
-            height: 20,
-          ),
-          const Text(
-            "Add Bricole",
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Card(
-            margin: const EdgeInsets.all(20),
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      key: const ValueKey("addField"),
-                      controller: _bricoleController,
-                    ),
-                  ),
-                  IconButton(
-                    key: const ValueKey("addButton"),
-                    icon: const Icon(Icons.add),
-                    onPressed: () {
-                      if (_bricoleController.text != "") {
-                        setState(() {
-                          Database(firestore: widget.firestore).addBricole(
-                              uid: widget.auth.currentUser.uid,
-                              content: _bricoleController.text);
-                          _bricoleController.clear();
-                        });
-                      }
-                    },
-                  )
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          const Text(
-            "My Bricoles",
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Expanded(
-            child: StreamBuilder(
-              stream: Database(firestore: widget.firestore)
-                  .streamBricoles(uid: widget.auth.currentUser.uid),
-              builder: (BuildContext context,
-                  AsyncSnapshot<List<BricoleModel>> snapshot) {
-                if (snapshot.connectionState == ConnectionState.active) {
-                  if (snapshot.data.isEmpty) {
-                    return const Center(
-                      child: Text("You don't have any available Bricoles"),
-                    );
-                  }
-                  return ListView.builder(
-                    itemCount: snapshot.data.length,
-                    itemBuilder: (_, index) {
-                      return BricoleCard(
-                        firestore: widget.firestore,
-                        uid: widget.auth.currentUser.uid,
-                        bricole: snapshot.data[index],
-                      );
-                    },
-                  );
-                } else {
-                  return const Center(
-                    child: Text("loading..."),
-                  );
-                }
-              },
-            ),
-          ),
+      body: pageChooser(_page),
+      bottomNavigationBar: CurvedNavigationBar(
+        key: _bottomNavigationKey,
+        backgroundColor: Colors.black,
+        height: 55,
+        index: 2,
+        items: <Widget>[
+          Icon(Icons.map, size: 30, color: Colors.black,),
+          Icon(Icons.list, size: 30, color: Colors.black),
+          Icon(Icons.add, size: 30, color: Colors.black),
+          Icon(Icons.analytics, size: 30, color: Colors.black),
+          Icon(Icons.supervised_user_circle, size: 30, color: Colors.black),
+
         ],
+        onTap: (index) {
+          setState(() {
+            _page = index;
+          });
+        },
       ),
     );
   }
