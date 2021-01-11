@@ -34,6 +34,9 @@ dependencies:
   cloud_firestore:
   lint:
   curved_navigation_bar:
+  flutter_map: any
+  location:
+  latlong:
 
 dev_dependencies:
   flutter_test:
