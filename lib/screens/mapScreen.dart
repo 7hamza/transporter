@@ -154,6 +154,7 @@ class _MapScreenState extends State<MapScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () => _liveUpdate = !_liveUpdate,
         child: _liveUpdate ? Icon(Icons.location_on) : Icon(Icons.location_off),
+        backgroundColor: Colors.grey,
       ),
     );
   }
