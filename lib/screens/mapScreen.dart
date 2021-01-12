@@ -1,12 +1,19 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
 import 'package:location/location.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 
 class MapScreen extends StatefulWidget {
   static const String route = '/live_location';
+  final FirebaseAuth auth;
+  final FirebaseFirestore firestore;
 
+  const MapScreen({Key key, this.auth, this.firestore}) : super(key: key);
+  
   @override
   _MapScreenState createState() => _MapScreenState();
 }

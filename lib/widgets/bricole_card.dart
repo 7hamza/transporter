@@ -33,6 +33,24 @@ class _BricoleCardState extends State<BricoleCard> {
                 ),
               ),
             ),
+            Expanded(
+              child: Text(
+                widget.bricole.bricoleLocation.latitude.toString(),
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            Expanded(
+              child: Text(
+                widget.bricole.bricoleLocation.longitude.toString(),
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
             Checkbox(
               value: widget.bricole.available,
               onChanged: (newValue) {

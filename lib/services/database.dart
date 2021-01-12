@@ -24,12 +24,13 @@ class Database {
       rethrow;
     }
   }
-
-  Future<void> addBricole({String uid, String content}) async {
+  
+  Future<void> addBricole({String uid, String content, GeoPoint location}) async {
     try {
       firestore.collection("bricoles").doc(uid).collection("bricoles").add({
         "description": content,
         "available": false,
+        "location": location,
       });
     } catch (e) {
       rethrow;
