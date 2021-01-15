@@ -43,7 +43,7 @@ class _MapScreenState extends State<MapScreen> {
 
   }
 
-  void _addMarker(GeoPoint geoPoint, String description) {
+  void _addMarker(GeoPoint geoPoint, String description, String userMail) {
       Marker _marker = Marker(
         width: 35.0,
         height: 35.0,
@@ -59,7 +59,7 @@ class _MapScreenState extends State<MapScreen> {
             routeBuilder: (BuildContext context) =>
                 Navigator.of(context).push(
                     MaterialPageRoute(builder: (BuildContext context) {
-              return BricolePage(tag: description,);
+              return BricolePage(tag: description,userMail: userMail);
             })),
           );
         });
@@ -71,7 +71,7 @@ class _MapScreenState extends State<MapScreen> {
       markers.clear();
       documentList.forEach((BricoleModel document) {
         GeoPoint point = document.bricoleLocation;
-        _addMarker(point,document.description);
+        _addMarker(point,document.description,widget.auth.currentUser.email.toString());
         print('marker added to markers');
         print(document.description);
       });

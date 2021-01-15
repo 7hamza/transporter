@@ -1,8 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class BricolePage extends StatelessWidget {
-  BricolePage({Key key, this.tag}) : super(key: key);
-  
+  final String userMail;
+  BricolePage({Key key, this.tag, this.userMail}) : super(key: key);
   final String tag;
 
   @override
@@ -32,7 +33,21 @@ class BricolePage extends StatelessWidget {
               const SizedBox(
                 height: 20,
               ),
-              Expanded(child: Text(tag))
+              Expanded(child: Text(tag)),
+              const SizedBox(
+                height: 20,
+              ),
+              const Text(
+                "Bricole Poster",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Expanded(child: Text(userMail))
 
             ]
           )
