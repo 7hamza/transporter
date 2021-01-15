@@ -20,7 +20,6 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   
   //screens
-  final MapScreen tab0 = MapScreen();
   final AnalyticsScreen tab3 = AnalyticsScreen();
   final ProfileScreen tab4 = ProfileScreen();
 
@@ -31,7 +30,7 @@ class _HomeState extends State<Home> {
   Widget pageChooser(int page) {
     switch (page) {
       case 0:
-        return tab0;
+        return MapScreen(auth: widget.auth, firestore: widget.firestore);
       case 1:
         return ListScreen(auth: widget.auth, firestore: widget.firestore);
       case 2:
@@ -62,7 +61,7 @@ class _HomeState extends State<Home> {
       body: pageChooser(_page),
       bottomNavigationBar: CurvedNavigationBar(
         key: _bottomNavigationKey,
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.transparent,
         height: 55,
         index: 2,
         items: <Widget>[

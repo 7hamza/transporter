@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_map/plugin_api.dart';
 import 'package:transporter/models/bricole.dart';
 
 class Database {
@@ -12,6 +13,25 @@ class Database {
           .doc(uid)
           .collection("bricoles")
           .where("available", isEqualTo: false)
+          .snapshots()
+          .map((query) {
+        final List<BricoleModel> retVal = <BricoleModel>[];
+        for (final DocumentSnapshot doc in query.docs) {
+          retVal.add(BricoleModel.fromDocumentSnapshot(documentSnapshot: doc));
+        }
+        return retVal;
+      });
+    } catch (e) {
+      rethrow;
+    }
+  }
+  Stream<List<BricoleModel>> streamLocations({String uid}) {
+    try {
+      return firestore
+          .collection("bricoles")
+          .doc(uid)
+          .collection("bricoles")
+          .where("location", isNotEqualTo: null)
           .snapshots()
           .map((query) {
         final List<BricoleModel> retVal = <BricoleModel>[];

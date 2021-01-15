@@ -5,6 +5,11 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
 import 'package:location/location.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:map_markers/map_markers.dart';
+import 'package:transporter/models/bricole.dart';
+import 'package:transporter/services/database.dart';
+import 'package:transporter/widgets/bricole_marker.dart';
+import 'package:transporter/widgets/bricole_page.dart';
 
 
 class MapScreen extends StatefulWidget {
@@ -28,14 +33,49 @@ class _MapScreenState extends State<MapScreen> {
   String _serviceError = '';
 
   final Location _locationService = Location();
-
+  var markers=<Marker>[];
+  
   @override
   void initState() {
     super.initState();
     _mapController = MapController();
     initLocationService();
+
   }
 
+  void _addMarker(GeoPoint geoPoint, String description) {
+      Marker _marker = Marker(
+        width: 35.0,
+        height: 35.0,
+        point: LatLng(geoPoint.latitude,geoPoint.longitude),
+        builder: (BuildContext context) {
+          return BricoleMarker(
+            imageAsset: "lib/assets/photo.jpeg",
+            name: "demenagemnt",
+            widgetBuilder: (BuildContext context) {
+              return Icon(Icons.location_on,
+                  size: 35.0, color: Colors.orangeAccent);
+            },
+            routeBuilder: (BuildContext context) =>
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (BuildContext context) {
+              return BricolePage(tag: description,);
+            })),
+          );
+        });
+      //setState(() {
+        markers.add(_marker);
+      //});
+    }
+    void _updateMarkers(List<BricoleModel> documentList) {
+      markers.clear();
+      documentList.forEach((BricoleModel document) {
+        GeoPoint point = document.bricoleLocation;
+        _addMarker(point,document.description);
+        print('marker added to markers');
+        print(document.description);
+      });
+    }
   void initLocationService() async {
     await _locationService.changeSettings(
       accuracy: LocationAccuracy.high,
@@ -104,20 +144,18 @@ class _MapScreenState extends State<MapScreen> {
     } else {
       currentLatLng = LatLng(0, 0);
     }
-
-    var markers = <Marker>[
+    Marker myMarker =
       Marker(
         width: 80.0,
         height: 80.0,
         point: currentLatLng,
-        builder: (ctx) => Container(
-        child: IconButton(icon: Icon(Icons.accessibility), 
-              onPressed: () {print('Marker tapped!');}
-        ),
-        ),
-      ),
-    ];
-
+        builder: (context) => BubbleMarker(
+                      bubbleColor: Colors.grey,
+                      bubbleContentWidgetBuilder: (BuildContext context) {
+                        return const Text("You");
+                      },
+    ));
+   
     return Scaffold(
       backgroundColor: Colors.black,
       body: Padding(
@@ -133,13 +171,37 @@ class _MapScreenState extends State<MapScreen> {
                       'Error occured while acquiring location. Error Message : '
                       '$_serviceError'),
             ),
+            Padding(
+              padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
+              child: StreamBuilder(
+                stream: Database(firestore: widget.firestore)
+                    .streamLocations(uid: widget.auth.currentUser.uid),
+                builder: (BuildContext context, AsyncSnapshot<List<BricoleModel>> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.active) {
+                    _updateMarkers(snapshot.data);
+                    markers.add(myMarker);
+                    if (snapshot.data.isEmpty) {
+                      return const Center(
+                        child: Text("No Bricoles near you"),
+                      );
+                    }
+                    return Text('Total Available bricoles is ' '${snapshot.data.length}');
+                  } 
+                  else {
+                   return const Center(
+                     child: Text("loading Bricoles..."),
+                     );
+                  }
+                }
+              )
+            ),
             Flexible(
               child: FlutterMap(
                 mapController: _mapController,
                 options: MapOptions(
                   center:
-                      LatLng(currentLatLng.latitude, currentLatLng.longitude),
-                  zoom: 17.0,
+                    LatLng(currentLatLng.latitude, currentLatLng.longitude),
+                  zoom: 13.0,
                 ),
                 layers: [
                   TileLayerOptions(
@@ -151,11 +213,12 @@ class _MapScreenState extends State<MapScreen> {
                     // NetworkTileProvider or CachedNetworkTileProvider
                     tileProvider: NonCachingNetworkTileProvider(),
                   ),
-                  MarkerLayerOptions(markers: markers)
-                ],
-              ),
-            ),
-          ],
+                  MarkerLayerOptions(
+                    markers: markers
+                  ),
+                ]
+              ))
+            ]
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -165,4 +228,5 @@ class _MapScreenState extends State<MapScreen> {
       ),
     );
   }
+          
 }
