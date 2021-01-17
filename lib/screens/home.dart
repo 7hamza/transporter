@@ -5,7 +5,7 @@ import 'package:transporter/screens/analytics.dart';
 import 'package:transporter/screens/listScreen.dart';
 import 'package:transporter/screens/mapScreen.dart';
 import 'package:transporter/screens/addScreen.dart';
-import 'package:transporter/screens/profile.dart';
+import 'package:transporter/screens/profileScreen.dart';
 import 'package:transporter/services/auth.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 
@@ -38,7 +38,7 @@ class _HomeState extends State<Home> {
       case 3:
         return tab3;
       case 4:
-        return tab4;
+        return ProfileScreen(title: widget.auth.currentUser.displayName.toString(),);
     }
   }
   

@@ -1,9 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class BricolePage extends StatelessWidget {
-  final String userMail;
-  BricolePage({Key key, this.tag, this.userMail}) : super(key: key);
+  final String userContact;
+  BricolePage({Key key, this.tag, this.userContact}) : super(key: key);
   final String tag;
 
   @override
@@ -47,7 +48,18 @@ class BricolePage extends StatelessWidget {
               const SizedBox(
                 height: 20,
               ),
-              Expanded(child: Text(userMail))
+              Flexible(child: ListTile(
+                title: Text(userContact.toString()),
+                onTap: () async {
+                  String telephoneUrl = "tel:$userContact";
+
+                  if (await canLaunch(telephoneUrl)) {
+                    await launch(telephoneUrl);
+                  } else {
+                    throw "Can't phone that number.";
+                  }
+                },
+              )),
 
             ]
           )

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:transporter/screens/home.dart';
 import 'package:transporter/screens/login.dart';
+import 'package:transporter/screens/phoneLoginScreen.dart';
 import 'package:transporter/services/auth.dart';
 
 void main() {
@@ -62,7 +63,7 @@ class _RootState extends State<Root> {
       builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
         if (snapshot.connectionState == ConnectionState.active) {
           if (snapshot.data?.uid == null) {
-            return Login(
+            return PhoneLogin(
               auth: _auth,
               firestore: _firestore,
             );
