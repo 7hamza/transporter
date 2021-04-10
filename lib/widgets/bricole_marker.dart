@@ -31,7 +31,7 @@ class _BricoleMarkerState extends State<BricoleMarker> {
     _isPoped
         ? w = Hero(
             tag: name,
-            child: Image.asset(imageAsset, width: 60.0, height: 45.0))
+            child: Image.network(imageAsset, width: 60.0, height: 45.0))
         : w = GestureDetector(
             child: widgetBuilder(context),
             onTap: () => setState(() {

@@ -43,14 +43,14 @@ class _MapScreenState extends State<MapScreen> {
 
   }
 
-  void _addMarker(GeoPoint geoPoint, String description, String userContact) {
+  void _addMarker(GeoPoint geoPoint, String description, String userContact, String imgURL) {
       Marker _marker = Marker(
         width: 35.0,
         height: 35.0,
         point: LatLng(geoPoint.latitude,geoPoint.longitude),
         builder: (BuildContext context) {
           return BricoleMarker(
-            imageAsset: "lib/assets/photo.jpeg",
+            imageAsset: imgURL,
             name: "demenagemnt",
             widgetBuilder: (BuildContext context) {
               return Icon(Icons.location_on,
@@ -59,7 +59,7 @@ class _MapScreenState extends State<MapScreen> {
             routeBuilder: (BuildContext context) =>
                 Navigator.of(context).push(
                     MaterialPageRoute(builder: (BuildContext context) {
-              return BricolePage(tag: description,userContact: userContact);
+              return BricolePage(tag: description, userContact: userContact, imgURL: imgURL);
             })),
           );
         });
@@ -71,9 +71,11 @@ class _MapScreenState extends State<MapScreen> {
       markers.clear();
       documentList.forEach((BricoleModel document) {
         GeoPoint point = document.bricoleLocation;
-        _addMarker(point,document.description,widget.auth.currentUser.phoneNumber.toString());
+        _addMarker(point,document.description,widget.auth.currentUser.phoneNumber.toString(),document.bricoleimgURL);
         print('marker added to markers');
         print(document.description);
+        print(document.bricoleId.toString());
+        print(document.bricoleimgURL.toString());
       });
     }
   void initLocationService() async {

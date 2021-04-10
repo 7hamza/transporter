@@ -1,6 +1,8 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_map/plugin_api.dart';
 import 'package:transporter/models/bricole.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class Database {
   final FirebaseFirestore firestore;
@@ -45,12 +47,22 @@ class Database {
     }
   }
   
-  Future<void> addBricole({String uid, String content, GeoPoint location}) async {
+  Future<void> addBricole({String uid, String content, GeoPoint location, File imgfile}) async {
+    final storage = FirebaseStorage.instance;
+    
+    var ref = firestore.collection("bricoles").doc(uid).collection("bricoles").doc();
+    var snapshot = await storage.refFromURL('gs://transporter-67539.appspot.com/')
+    .child('bricoles/'+ref.id)
+    .putFile(imgfile);
+    var downloadUrl = await snapshot.ref.getDownloadURL();
+    
     try {
-      firestore.collection("bricoles").doc(uid).collection("bricoles").add({
+      ref.set({
+        "bricoleId": ref.id,
         "description": content,
         "available": false,
         "location": location,
+        "bricoleimgURL": downloadUrl,
       });
     } catch (e) {
       rethrow;
@@ -71,4 +83,5 @@ class Database {
       rethrow;
     }
   }
+
 }

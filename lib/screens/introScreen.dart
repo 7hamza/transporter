@@ -39,7 +39,7 @@ class _IntroScreenState extends State<IntroScreen> {
             textAlign: TextAlign.center,
             onChanged: (value) {
               widget.userCredential.user.updateProfile(displayName: value);
-              
+              widget.userCredential.user.updateProfile(photoURL: "https://thispersondoesnotexist.com/image");
             }),
         decoration: const PageDecoration(
             pageColor: Colors.black,

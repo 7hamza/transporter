@@ -4,7 +4,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 class BricolePage extends StatelessWidget {
   final String userContact;
-  BricolePage({Key key, this.tag, this.userContact}) : super(key: key);
+  final String imgURL;
+  BricolePage({Key key, this.tag, this.userContact, this.imgURL}) : super(key: key);
   final String tag;
 
   @override
@@ -17,9 +18,9 @@ class BricolePage extends StatelessWidget {
             children: <Widget>[
               Hero(
                 tag: tag,
-                child: Image.asset(
-                  "lib/assets/photo.jpeg",
-                  fit: BoxFit.fitWidth,
+                child: Image.network(
+                  imgURL,
+                  height: MediaQuery.of(context).size.height * 0.5,
               )),
               const SizedBox(
                 height: 20,
@@ -39,7 +40,7 @@ class BricolePage extends StatelessWidget {
                 height: 20,
               ),
               const Text(
-                "Bricole Poster",
+                "Contact Bricole Poster",
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -49,7 +50,7 @@ class BricolePage extends StatelessWidget {
                 height: 20,
               ),
               Flexible(child: ListTile(
-                title: Text(userContact.toString()),
+                title: Text(userContact.toString(),textAlign: TextAlign.center,),
                 onTap: () async {
                   String telephoneUrl = "tel:$userContact";
 
@@ -59,6 +60,7 @@ class BricolePage extends StatelessWidget {
                     throw "Can't phone that number.";
                   }
                 },
+                
               )),
 
             ]

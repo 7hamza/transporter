@@ -38,7 +38,7 @@ class _HomeState extends State<Home> {
       case 3:
         return tab3;
       case 4:
-        return ProfileScreen(title: widget.auth.currentUser.displayName.toString(),);
+        return ProfileScreen(auth: widget.auth,);
     }
   }
   
